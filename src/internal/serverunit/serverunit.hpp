@@ -12,8 +12,8 @@
 #include <unistd.h>
 
 #include "../signalmanager/signalmanager.hpp"
-
-// Represents 
+ 
+// Represents single server unit.
 class ServerUnit {
 private:
     std::vector<int> chunk;
@@ -23,14 +23,10 @@ public:
     static int serverManagerInputQueueFd;
 
     ServerUnit(std::string serverManagerInputQueueName, std::vector<int>& chunk);
-
-    // //
-    // std::string getServerQueueName();
-
-    // void write(std::vector<int>& src);
     
+    // Starts server unit internal calculation.
     void startRaw();
 
-    //
+    // Initializes server unit.
     void start();
 };

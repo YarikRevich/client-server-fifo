@@ -2,6 +2,7 @@
 
 #include <string>
 #include <iostream>
+#include <math.h>
 
 #include <thread>
 #include <sys/ipc.h>
@@ -39,16 +40,16 @@ public:
 
     ServerManager();
 
-    // 
+    // Returns client input queue name.
     std::string getClientInputQueueName();
 
-    //
+    // Returns client output queue name.
     std::string getClientOutputQueueName();
 
-    // 
+    // Starts input listening process.  
     void start();
 
-    // 
+    // Represents handler used for graceful exit.
     static void handleExit(int s);
 };
 

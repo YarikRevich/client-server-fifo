@@ -13,17 +13,11 @@ if (NOT WIN32)
     # Describes prefix used for client output queue.
 	add_compile_definitions(CLIENT_OUTPUT_QUEUE_SUFFIX="client_output")
 
-    # Describes prefix used for server input queue.
-	add_compile_definitions(SERVER_INPUT_QUEUE_SUFFIX="server_input")
-
-    # # Describes prefix used for server output queue.
-	# add_compile_definitions(SERVER_OUTPUT_QUEUE_SUFFIX="server_output")
-
     # Describes prefix used for servermanager input queue.
 	add_compile_definitions(SERVER_MANAGER_INPUT_QUEUE_SUFFIX="servermanager_input")
 
-    # Describes prefix used for servermanager output queue.
-	add_compile_definitions(SERVER_MANAGER_QUEUE_SUFFIX="servermanager_output")
+	# Describes server unit startup delay.
+	add_compile_definitions(SERVER_UNIT_DELAY=200)
 
     # Describes max amount of elements in the given data.
 	add_compile_definitions(MAX_DATA_NUM=30)
@@ -41,6 +35,7 @@ if (NOT WIN32)
 		src/internal/serverunit/serverunit.cpp
 		src/internal/servermanager/servermanager.cpp
         src/internal/signalmanager/signalmanager.cpp
+		src/internal/processor/processor.cpp
         src/internal/state/state.cpp
         src/internal/logger/logger.cpp
 

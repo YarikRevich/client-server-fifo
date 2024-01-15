@@ -15,6 +15,7 @@ private:
     args::Command* command = NULL;
     args::ValueFlag<std::string>* input = NULL;
     args::ValueFlag<std::string>* output = NULL;
+    args::ValueFlag<std::string>* data = NULL;
 
 public:
     Client(args::ArgumentParser*);

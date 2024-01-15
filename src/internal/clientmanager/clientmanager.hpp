@@ -11,6 +11,7 @@
 
 #include "../state/state.hpp"
 #include "../logger/logger.hpp"
+#include "../processor/processor.hpp"
 #include "../signalmanager/signalmanager.hpp"
 
 // Represents client manager used for the server based calculation.
@@ -28,10 +29,8 @@ public:
 
     ClientManager(std::string clientInputQueueName, std::string clientOutputQueueName);
 
-    // Performs sum calculation for the given array. Seperates
-    // given N*N array into N parts to be calculated on N external
-    // servers.
-    int start(std::vector<std::vector<int>>& src);
+    // 
+    int start(std::string src);
 };
 
 namespace ClientManagerHelper {

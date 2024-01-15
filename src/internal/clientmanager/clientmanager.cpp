@@ -49,21 +49,35 @@ ClientManager::ClientManager(std::string clientInputQueueName, std::string clien
     SignalManager::handleSignal(&ClientManagerHelper::handleExit);
 }
 
-int ClientManager::start(std::vector<std::vector<int>>& src) {
-    if (!isDataValid(src)) {
+int ClientManager::start(std::string src) {
+    std::vector<int> chunks = Processor::separateDataByDelimeter(src);
+
+    int chunkNum = (int)sqrt(chunks.size());
+
+    std::vector<std::vector<int>> dst;
+
+    for (int i = 0; i < chunks.size(); i += chunkNum) {
+        std::vector<int> chunk;
+        for (int j = 0; j < chunkNum; j++) {
+            chunk.push_back(chunks[i + j]);
+        }
+        dst.push_back(chunk);
+    }
+
+    if (!isDataValid(dst)) {
         Logger::SetError("Given data is not valid!");
         return EXIT_FAILURE;
     }
 
-    int buff[src.size()][src[0].size()];
+    int buff[dst.size()][dst[0].size()];
 
-    for (int i = 0; i < src.size(); i++) {
-        for (int j = 0; j < src[i].size(); j++) {
-            buff[i][j] = src[i][j];
+    for (int i = 0; i < dst.size(); i++) {
+        for (int j = 0; j < dst[i].size(); j++) {
+            buff[i][j] = dst[i][j];
         }
     }
 
-    write(clientInputQueueFd, &buff, getDataSize(src));
+    write(clientInputQueueFd, &buff, getDataSize(dst));
 
     int result;
     read(clientOutputQueueFd, &result, sizeof(result));

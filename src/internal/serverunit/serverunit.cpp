@@ -9,13 +9,14 @@ ServerUnit::ServerUnit(std::string serverManagerInputQueueName, std::vector<int>
 }
 
 void ServerUnit::startRaw() {
+    std::chrono::milliseconds duration(SERVER_UNIT_DELAY);
+    std::this_thread::sleep_for(duration);
+
     int result = 0;
 
     for (int value : chunk) {
         result += value;
     }
-
-    std::cout << result << std::endl;
 
     write(serverManagerInputQueueFd, &result, sizeof(result));
 }

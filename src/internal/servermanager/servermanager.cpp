@@ -9,27 +9,25 @@ std::string ServerManager::serverManagerInputQueueName;
 std::vector<std::vector<int>> ServerManager::getDataFromBuff(int src[MAX_DATA_NUM][MAX_DATA_NUM]) {
     std::vector<std::vector<int>> result;
 
-    for (int i = 0; i < MAX_DATA_NUM; i++) {
-        if (result.size() <= i) {
-            result.push_back(std::vector<int>());
-        }
-
-        for (int j = 0; j < MAX_DATA_NUM; j++) {
-            result[i].push_back(0);
-        }
-    }
+    std::vector<int> chunks;
     
     for (int i = 0; i < MAX_DATA_NUM; i++) {
         for (int j = 0; j < MAX_DATA_NUM; j++) {
-            result[i][j] = src[i][j];
-        }   
+            if (src[i][j] != INT_MIN) {
+                chunks.push_back(src[i][j]);
+            }
+        }
     }
+    
+    int chunkNum = (int)sqrt(chunks.size());
 
-    // for (auto v1 : result) {
-    //     for (auto v2 : v1) {
-    //         std::cout << v2 << std::endl;
-    //     }
-    // }
+    for (int i = 0; i < chunks.size(); i += chunkNum) {
+        std::vector<int> chunk;
+        for (int j = 0; j < chunkNum; j++) {
+            chunk.push_back(chunks[i + j]);
+        }
+        result.push_back(chunk);
+    }
 
     return result;
 };
@@ -70,6 +68,12 @@ std::string ServerManager::getClientOutputQueueName() {
 void ServerManager::start() {
     int dst[MAX_DATA_NUM][MAX_DATA_NUM];
 
+    for (int i = 0; i < MAX_DATA_NUM; i++) {
+        for (int j = 0; j < MAX_DATA_NUM; j++) {
+            dst[i][j] = INT_MIN;
+        }
+    }
+
     while ((read(clientInputQueueFd, &dst, sizeof(int) * MAX_DATA_NUM * MAX_DATA_NUM)) > 0) {
         std::vector<std::vector<int>> data = getDataFromBuff(dst);
 
@@ -77,6 +81,12 @@ void ServerManager::start() {
 
         for (std::vector<int> chunk : data) {
             servers.push_back(new ServerUnit(serverManagerInputQueueName, chunk));
+        }
+
+        std::cout << "Allocated " << servers.size() << " server units" << std::endl;
+
+        for (ServerUnit *server : servers) {
+            server->start();
         }
 
         int result = 0;
@@ -87,8 +97,6 @@ void ServerManager::start() {
 
             result += dst;
         }
-
-        std::cout << result << std::endl;
 
         write(clientOutputQueueFd, &result, sizeof(result));
     };

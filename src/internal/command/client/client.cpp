@@ -5,6 +5,7 @@ Client::Client(args::ArgumentParser* argumentParser) {
     args::Group* group = new args::Group(*command, "");
     this->input = new args::ValueFlag<std::string>(*group, "input", "Input FIFO to connect to", {"input"});
     this->output = new args::ValueFlag<std::string>(*group, "output", "Output FIFO to connect to", {"output"});
+    this->data = new args::ValueFlag<std::string>(*group, "data", "Input data to be calculated", {"data"});
 }
 
 bool Client::isCalled() {
@@ -25,13 +26,14 @@ int Client::handle() {
         return EXIT_FAILURE;
     }
 
+    if (!data->Matched()){
+        Validator::throwValueFlagRequiredException("data");
+        return EXIT_FAILURE;
+    }
+
     ClientManager clientManager(input->Get(), output->Get());
-
-    std::vector<std::vector<int>> src = {
-        {30, 30}, 
-        {20, 20}};
-
-    int result = clientManager.start(src);
+    
+    int result = clientManager.start(data->Get());
     if (result == EXIT_SUCCESS) {
         std::cout << "Result: " << State::getSum() << std::endl;
     }
