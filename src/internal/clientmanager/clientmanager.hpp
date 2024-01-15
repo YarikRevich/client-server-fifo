@@ -9,6 +9,8 @@
 #include <fcntl.h>
 #include <unistd.h>
 
+#include "../state/state.hpp"
+#include "../logger/logger.hpp"
 #include "../signalmanager/signalmanager.hpp"
 
 // Represents client manager used for the server based calculation.

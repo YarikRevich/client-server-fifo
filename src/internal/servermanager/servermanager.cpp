@@ -4,7 +4,35 @@ std::string ServerManager::clientInputQueueName;
 
 std::string ServerManager::clientOutputQueueName;
 
-std::string ServerManager::serverManagerQueueName;
+std::string ServerManager::serverManagerInputQueueName;
+
+std::vector<std::vector<int>> ServerManager::getDataFromBuff(int src[MAX_DATA_NUM][MAX_DATA_NUM]) {
+    std::vector<std::vector<int>> result;
+
+    for (int i = 0; i < MAX_DATA_NUM; i++) {
+        if (result.size() <= i) {
+            result.push_back(std::vector<int>());
+        }
+
+        for (int j = 0; j < MAX_DATA_NUM; j++) {
+            result[i].push_back(0);
+        }
+    }
+    
+    for (int i = 0; i < MAX_DATA_NUM; i++) {
+        for (int j = 0; j < MAX_DATA_NUM; j++) {
+            result[i][j] = src[i][j];
+        }   
+    }
+
+    // for (auto v1 : result) {
+    //     for (auto v2 : v1) {
+    //         std::cout << v2 << std::endl;
+    //     }
+    // }
+
+    return result;
+};
 
 ServerManager::ServerManager() {
     ServerManager::clientInputQueueName = std::to_string(rand()).append(CLIENT_INPUT_QUEUE_SUFFIX);
@@ -19,8 +47,14 @@ ServerManager::ServerManager() {
         printf("Failed to initialize output client queue\n");
     };
 
-    this->clientInputQueueFd = open(ServerManager::clientInputQueueName.c_str(), O_RDONLY);
-    this->clientOutputQueueFd = open(ServerManager::clientOutputQueueName.c_str(), O_WRONLY);
+    ServerManager::serverManagerInputQueueName = std::to_string(rand()).append(SERVER_MANAGER_INPUT_QUEUE_SUFFIX);
+    if ((mkfifo(ServerManager::serverManagerInputQueueName.c_str(), 0666)) < 0) {
+        printf("Failed to initialize input servermanager queue\n");
+    };
+
+    this->clientInputQueueFd = open(ServerManager::clientInputQueueName.c_str(), O_RDWR, 0);
+    this->clientOutputQueueFd = open(ServerManager::clientOutputQueueName.c_str(), O_RDWR, 0);
+    this->serverManagerInputQueueFd = open(ServerManager::serverManagerInputQueueName.c_str(), O_RDWR, 0);
 
     SignalManager::handleSignal(&ServerManagerHelper::handleExit);
 }
@@ -37,20 +71,24 @@ void ServerManager::start() {
     int dst[MAX_DATA_NUM][MAX_DATA_NUM];
 
     while ((read(clientInputQueueFd, &dst, sizeof(int) * MAX_DATA_NUM * MAX_DATA_NUM)) > 0) {
+        std::vector<std::vector<int>> data = getDataFromBuff(dst);
+
         std::vector<ServerUnit*> servers;
 
-        // for (int i = 0; i < MAX_DATA_NUM; i++) {
-        //     ServerUnit* server = new ServerUnit(chunk);
+        for (std::vector<int> chunk : data) {
+            servers.push_back(new ServerUnit(serverManagerInputQueueName, chunk));
+        }
 
-        //     servers.push_back(server);
-        // }
+        int result = 0;
+        int dst;
 
-        // for (ServerUnit* server : servers) {
-        //     server->start();
-        // }
+        for (int i = 0;  i < data.size(); i++) {
+            read(serverManagerInputQueueFd, &dst, sizeof(dst));
 
-        // for (int i = i)
-        int result = 15;
+            result += dst;
+        }
+
+        std::cout << result << std::endl;
 
         write(clientOutputQueueFd, &result, sizeof(result));
     };
@@ -65,7 +103,7 @@ void ServerManagerHelper::handleExit(int s) {
         printf("Failed to remove output client queue\n");
     }
 
-    if ((remove(ServerManager::serverManagerQueueName.c_str())) < 0) {
-        printf("Failed to remove servermanager queue\n");
+    if ((remove(ServerManager::serverManagerInputQueueName.c_str())) < 0) {
+        printf("Failed to remove input servermanager queue\n");
     }
 }

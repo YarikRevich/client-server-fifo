@@ -38,6 +38,7 @@
 //     return -1;
 // }
 
+#include "../internal/logger/logger.hpp"
 #include "../internal/command/handler/handler.hpp"
 
 using namespace std;
@@ -48,5 +49,13 @@ using namespace std;
 int main(int argc, char **argv) {
     Handler* handler = new Handler(argc, argv);
 
-    return handler->run();
+    if (handler->run() != EXIT_SUCCESS) {
+        if (Logger::IsErrorExist()) {
+            std::cout << Logger::GetError() << std::endl;
+        }
+
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
 }

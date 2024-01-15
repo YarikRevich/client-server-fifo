@@ -28,14 +28,13 @@ int Client::handle() {
     ClientManager clientManager(input->Get(), output->Get());
 
     std::vector<std::vector<int>> src = {
-        {30, 30, 30, 30}, 
-        {20, 20, 20, 20}};
-
-    std::cout << "Starting client calculation!" << std::endl;
+        {30, 30}, 
+        {20, 20}};
 
     int result = clientManager.start(src);
+    if (result == EXIT_SUCCESS) {
+        std::cout << "Result: " << State::getSum() << std::endl;
+    }
 
-    std::cout << result << std::endl;
-
-    return EXIT_SUCCESS;
+    return EXIT_FAILURE;
 };

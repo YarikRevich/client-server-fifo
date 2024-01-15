@@ -20,10 +20,9 @@ private:
 
     std::thread thread;
 public:
-    // Represents generated server queue name used for client-servermanager communication.
-    static std::string serverQueueName;
+    static int serverManagerInputQueueFd;
 
-    ServerUnit(std::vector<int>& chunk);
+    ServerUnit(std::string serverManagerInputQueueName, std::vector<int>& chunk);
 
     // //
     // std::string getServerQueueName();
@@ -34,11 +33,4 @@ public:
 
     //
     void start();
-
-    ~ServerUnit();
 };
-
-namespace ServerUnitHelper {
-    // Handles graceful exit for the server.
-    void handleExit(int s);
-}

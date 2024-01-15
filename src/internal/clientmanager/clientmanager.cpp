@@ -21,6 +21,8 @@ int** ClientManager::convertDataToBuff(std::vector<std::vector<int>>& src) {
 };
 
 bool ClientManager::isDataValid(std::vector<std::vector<int>>& src) {
+    int colomn = src.size();
+
     int row = -1;
 
     for (int i = 0; i < src.size(); i++) {
@@ -33,7 +35,7 @@ bool ClientManager::isDataValid(std::vector<std::vector<int>>& src) {
         }
     }
 
-    return row < MAX_DATA_NUM;
+    return (row < MAX_DATA_NUM) && row == colomn;
 };
 
 int ClientManager::getDataSize(std::vector<std::vector<int>>& src) {
@@ -41,15 +43,16 @@ int ClientManager::getDataSize(std::vector<std::vector<int>>& src) {
 };
 
 ClientManager::ClientManager(std::string clientInputQueueName, std::string clientOutputQueueName) {    
-    this->clientInputQueueFd = open(clientInputQueueName.c_str(), O_WRONLY, 0);
-    this->clientOutputQueueFd = open(clientOutputQueueName.c_str(), O_RDONLY, 0);
+    this->clientInputQueueFd = open(clientInputQueueName.c_str(), O_RDWR, 0);
+    this->clientOutputQueueFd = open(clientOutputQueueName.c_str(), O_RDWR, 0);
 
     SignalManager::handleSignal(&ClientManagerHelper::handleExit);
 }
 
 int ClientManager::start(std::vector<std::vector<int>>& src) {
     if (!isDataValid(src)) {
-        return 0;
+        Logger::SetError("Given data is not valid!");
+        return EXIT_FAILURE;
     }
 
     int buff[src.size()][src[0].size()];
@@ -63,17 +66,11 @@ int ClientManager::start(std::vector<std::vector<int>>& src) {
     write(clientInputQueueFd, &buff, getDataSize(src));
 
     int result;
-
     read(clientOutputQueueFd, &result, sizeof(result));
-    // int result, dst;
+    
+    State::setSum(result);
 
-    // for (int i = 0; i < src.size(); i++) {
-    //     while ((read(clientQueueFd, &dst, sizeof(dst))) > 0) {
-    //         result += dst;
-    //     };
-    // }
-
-    return result;
+    return EXIT_SUCCESS;
 };
 
 void ClientManagerHelper::handleExit(int s) {

@@ -16,8 +16,8 @@ if (NOT WIN32)
     # Describes prefix used for server input queue.
 	add_compile_definitions(SERVER_INPUT_QUEUE_SUFFIX="server_input")
 
-    # Describes prefix used for server output queue.
-	add_compile_definitions(SERVER_OUTPUT_QUEUE_SUFFIX="server_output")
+    # # Describes prefix used for server output queue.
+	# add_compile_definitions(SERVER_OUTPUT_QUEUE_SUFFIX="server_output")
 
     # Describes prefix used for servermanager input queue.
 	add_compile_definitions(SERVER_MANAGER_INPUT_QUEUE_SUFFIX="servermanager_input")
@@ -41,6 +41,8 @@ if (NOT WIN32)
 		src/internal/serverunit/serverunit.cpp
 		src/internal/servermanager/servermanager.cpp
         src/internal/signalmanager/signalmanager.cpp
+        src/internal/state/state.cpp
+        src/internal/logger/logger.cpp
 
         src/internal/command/client/client.cpp
         src/internal/command/server/server.cpp

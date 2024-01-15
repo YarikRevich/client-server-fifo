@@ -17,8 +17,8 @@ int Server::handle() {
     ServerManager serverManager;
 
     std::cout << "Queues are spawned: \n" << 
-        "Input: " << serverManager.getClientInputQueueName() << 
-        std::endl << "Output" << serverManager.getClientOutputQueueName() << std::endl;
+        "    Input: " << serverManager.getClientInputQueueName() << 
+        std::endl << "    Output: " << serverManager.getClientOutputQueueName() << std::endl;
 
     serverManager.start();
 

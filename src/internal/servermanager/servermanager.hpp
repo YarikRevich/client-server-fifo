@@ -23,14 +23,10 @@ private:
     // Represents opened output client queue used for client-servermanager communication.
     int clientOutputQueueFd;
 
-    // Represents opened servermanager queue used for client-servermanager communication.
-    int serverManagerQueueFd;
+    // Represents opened servermanager input queue used for client-servermanager communication.
+    int serverManagerInputQueueFd;
 
-    // std::thread thread;
-
-    // std::vector<std::vector>
-
-    
+    std::vector<std::vector<int>> getDataFromBuff(int src[MAX_DATA_NUM][MAX_DATA_NUM]);
 public:
     // Represents generated client input queue name used for client-servermanager communication.
     static std::string clientInputQueueName;
@@ -38,8 +34,8 @@ public:
     // Represents generated client output queue name used for client-servermanager communication.
     static std::string clientOutputQueueName;
 
-    // Represents generated servermanager queue name used for client-servermanager communication.
-    static std::string serverManagerQueueName;
+    // Represents generated servermanager input queue name used for client-servermanager communication.
+    static std::string serverManagerInputQueueName;
 
     ServerManager();
 
