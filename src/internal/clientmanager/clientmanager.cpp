@@ -4,22 +4,6 @@ int ClientManager::clientInputQueueFd;
 
 int ClientManager::clientOutputQueueFd;
 
-int** ClientManager::convertDataToBuff(std::vector<std::vector<int>>& src) {
-    int** result = new int*[src.size()];
-
-    for (int i = 0; i < src.size(); i++) {
-        result[i] = new int[src[i].size()];
-    }
-
-    for (int i = 0; i < src.size(); i++) {
-        for (int j = 0; j < src[i].size(); j++) {
-            result[i][j] = src[i][j];
-        }
-    }
-
-    return result;
-};
-
 bool ClientManager::isDataValid(std::vector<std::vector<int>>& src) {
     int colomn = src.size();
 

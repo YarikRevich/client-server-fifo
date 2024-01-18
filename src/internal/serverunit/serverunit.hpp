@@ -13,20 +13,35 @@
 
 #include "../signalmanager/signalmanager.hpp"
  
-// Represents single server unit.
+/**
+ * Represents single server unit.
+*/
 class ServerUnit {
 private:
+    /**
+     * Represents selected data chunk.
+    */
     std::vector<int> chunk;
 
+    /**
+     * Represents server unit current thread.
+    */
     std::thread thread;
 public:
+    /**
+     * Represents server manager input queue opened in write only mode.
+    */
     static int serverManagerInputQueueFd;
 
     ServerUnit(std::string serverManagerInputQueueName, std::vector<int>& chunk);
     
-    // Starts server unit internal calculation.
+    /**
+     * Starts server unit internal calculation.
+    */
     void startRaw();
 
-    // Initializes server unit.
+    /**
+     * Initializes server unit.
+    */
     void start();
 };
